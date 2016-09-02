@@ -34,18 +34,26 @@ main(int argc, char *argv[])
     exit(1);
 
   }
-
+  int total; // the total number of bytes in the record
   rec_t r;
   while (1) {
-  int rc;
-  rc = read(fd, 
-
-
-
-
-
+    int rc;
+    rc = read(fd, &r, sizeof(rec_t)); // &r gives the pointer to the record list, r.
+    if (rc == 0)
+      break;
+    if (rc < 0) {
+      perror("read");
+      exit(1);
+        }
+    total = total + sizeof(r);
   }
+  
+  printf("Filesize: %d\n",total);
 
+  
+  (void) close(fd);  
+
+  return 0;
 }
 
 
