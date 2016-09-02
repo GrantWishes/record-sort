@@ -50,7 +50,12 @@ main(int argc, char *argv[])
   
   printf("Filesize: %d\n",total);
 
-  
+  printf("If this works, it's the address: %d\n",&r); // WHAT YOU NEED TO DO: Figure out how 'r' variable works. I'm pretty sure that's where the records are being read into. From there
+                                                      // You need to be able to dynamically allocate space ( malloc? ) and get the records into there. Each record is 100 bytes. From there, gotta find a way
+                                                      // to check the first 4 bytes of each, which has the key. Sort by that. Try something like r[] next time you try this!!!!
+
+
+ 
   (void) close(fd);  
 
   return 0;
