@@ -6,7 +6,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "sort.h"
-
+WHAT THE HELL IS GOING ONNNNNNNNNNNNNNNNN
 int
 main(int argc, char *argv[])
 {
