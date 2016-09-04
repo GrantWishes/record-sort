@@ -29,7 +29,6 @@ main(int argc, char *argv[])
  printf("The input file is %s and the output file is %s\n", inFile, outFile);
 
   int fd = open(inFile, O_RDONLY);
-  int test = fd; 
   if (fd < 0) {
     perror("open");
     exit(1);
@@ -49,6 +48,7 @@ main(int argc, char *argv[])
     totalBytes  = totalBytes + sizeof(r);
   }
 
+  (void) close(fd);  
   int numRecs;             // The total number of records in the input file.
   numRecs = totalBytes / 100;
 
@@ -58,20 +58,23 @@ main(int argc, char *argv[])
   printf("If this works, it's the last key: %d\n",r.key); // WHAT YOU NEED TO DO: Figure out how 'r' variable works. I'm pretty sure that's where the records are being read into. From there
                                                       // You need to be able to dynamically allocate space ( malloc? ) and get the records into there. Each record is 100 bytes. From there, gotta find a way
                                                       // to check the first 4 bytes of each, which has the key. Sort by that. Try something like r[] next time you try this!!!!
-  rec_t *records;
-
-  records = (rec_t *)malloc(totalBytes);
- // rewind(fd);
+  rec_t *data;
+  data = (rec_t *)malloc(totalBytes);
+  
+  fd = open(inFile, O_RDONLY);
   for(int i = 0; i<numRecs; i++){
     int rc;
-    rc = read(test, &r, sizeof(rec_t)); 
-    records[i] = r;
-
+    rc = read(fd, &r, sizeof(rec_t)); 
+    data[i] = r;
+    //printf("r is %d\n",r.key);
 
     }  
 
 
- 
+  for(int j = 0; j < NUMRECS; j++){ 
+    printf("Will this work?: %u\n",data[91].record[j]);
+    }
+
   (void) close(fd);  
 
   return 0;
