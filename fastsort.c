@@ -45,14 +45,28 @@ main(int argc, char *argv[])
       perror("read");
       exit(1);
         }
-    total = total + sizeof(r);
+    totalByes  = totalBytes + sizeof(r);
   }
-  
-  printf("Filesize: %d\n",total);
+  int numRecs;             // The total number of records in the input file.
+  numRecs = totalBytes / 100;
 
-  printf("If this works, it's the address: %d\n",&r); // WHAT YOU NEED TO DO: Figure out how 'r' variable works. I'm pretty sure that's where the records are being read into. From there
+ 
+  printf("Filesize: %d, total records = %d\n",totalBytes,numRecs);
+
+  printf("If this works, it's the last key: %d\n",r.key); // WHAT YOU NEED TO DO: Figure out how 'r' variable works. I'm pretty sure that's where the records are being read into. From there
                                                       // You need to be able to dynamically allocate space ( malloc? ) and get the records into there. Each record is 100 bytes. From there, gotta find a way
                                                       // to check the first 4 bytes of each, which has the key. Sort by that. Try something like r[] next time you try this!!!!
+  rec_t *records;
+
+  records = (struct rec_t *)malloc(total);
+
+  for(int i = 0; i<numRecs; i+1){
+    //fill here
+    printf("no");
+
+
+
+  }
 
 
  
