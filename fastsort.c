@@ -29,12 +29,13 @@ main(int argc, char *argv[])
  printf("The input file is %s and the output file is %s\n", inFile, outFile);
 
   int fd = open(inFile, O_RDONLY);
+  int test = fd; 
   if (fd < 0) {
     perror("open");
     exit(1);
 
   }
-  int total; // the total number of bytes in the record
+  int totalBytes; // the total number of bytes in the record
   rec_t r;
   while (1) {
     int rc;
@@ -45,8 +46,9 @@ main(int argc, char *argv[])
       perror("read");
       exit(1);
         }
-    totalByes  = totalBytes + sizeof(r);
+    totalBytes  = totalBytes + sizeof(r);
   }
+
   int numRecs;             // The total number of records in the input file.
   numRecs = totalBytes / 100;
 
@@ -58,15 +60,15 @@ main(int argc, char *argv[])
                                                       // to check the first 4 bytes of each, which has the key. Sort by that. Try something like r[] next time you try this!!!!
   rec_t *records;
 
-  records = (struct rec_t *)malloc(total);
+  records = (rec_t *)malloc(totalBytes);
+ // rewind(fd);
+  for(int i = 0; i<numRecs; i++){
+    int rc;
+    rc = read(test, &r, sizeof(rec_t)); 
+    records[i] = r;
 
-  for(int i = 0; i<numRecs; i+1){
-    //fill here
-    printf("no");
 
-
-
-  }
+    }  
 
 
  
