@@ -8,11 +8,21 @@
 #include "sort.h"
 
 int
+compare(const void* a, const void* b){
+
+  int one = (*(rec_t *)a).key;
+  int two = (*(rec_t *)b).key;
+  return (one-two);
+
+  }  
+
+
+int
 main(int argc, char *argv[])
 {
 
   char *inFile = "/no/such/file";
-  char *outFile = "no/such/file";  
+  char *outFile = "/no/such/file";  
 
   int c;
   opterr = 0;
@@ -75,9 +85,28 @@ main(int argc, char *argv[])
     printf("Will this work?: %u\n",data[99].record[j]);
     }
 
+  qsort(data, numRecs, 100, compare);
+
+
+
+
+
+
   (void) close(fd);  
 
   return 0;
+
+//void
+//compare(const void* a, const void* b){
+//
+//  int one = ((rec_t *)a).key;
+//  int two = ((rec_t *)b).key;
+//  return (one-two);
+//
+//  }  
+
+
+
 }
 
 
