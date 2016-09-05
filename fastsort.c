@@ -17,30 +17,42 @@ int compare(const void* a, const void* b)
     return (one-two);
 }  
 
+int usage()
+{
+    fprintf(stderr, "Usage: fastsort -i inputfile -o outputfile\n");
+    exit(1);
+}
+
 
 int main(int argc, char *argv[]) 
 {
-    char *inFile = "/no/such/file";
-    char *outFile = "/no/such/file";  
+    char *inFile;
+    char *outFile;  
 
     int c;
     opterr = 0;
+
+    if(argc != 4){
+      usage();  
+    }
+
     while ((c = getopt(argc, argv, "i:o:")) != -1) {
+        // code based off of the dump.c provided!
         switch (c) {
-        case 'i':
-            inFile = strdup(optarg);
-            break;
-        case 'o':
-            outFile = strdup(optarg); 
-            break;
-        default:
-            fprintf(stderr, "Usage: -i inputFile -o outputFile\n");
+            case 'i':
+                inFile = strdup(optarg);
+                break;
+            case 'o':
+                outFile = strdup(optarg); 
+                break;
+            default:
+                usage();
         }
     }
   
     int fd = open(inFile, O_RDONLY);
     if (fd < 0) {
-        perror("open");
+        fprintf(stderr, "Error: Cannot open file %s\n", inFile);
         exit(1);
     }
  
@@ -79,7 +91,11 @@ int main(int argc, char *argv[])
 
     // opening the file again. probably a better way to do this... couldn't figure out rewind()
     fd = open(inFile, O_RDONLY);
- 
+    if (fd < 0) {
+        fprintf(stderr, "Error: Cannot open file %s\n", inFile);
+        exit(1);
+    }
+
     for(int i = 0; i<numRecs; i++) {
         // putting the values into the array
         int rc;
@@ -98,8 +114,8 @@ int main(int argc, char *argv[])
     // Prepping the output file to be written to.
     fd = open(outFile, O_WRONLY|O_CREAT|O_TRUNC, S_IRWXU);
     if (fd < 0) {
-         perror("open");
-         exit(1);
+        fprintf(stderr, "Error: Cannot open file %s\n", outFile);    
+        exit(1);
     }
 
     for(int i = 0; i < numRecs; i++){
