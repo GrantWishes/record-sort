@@ -81,11 +81,13 @@ main(int argc, char *argv[])
     }  
 
 
-  for(int j = 0; j < NUMRECS; j++){ 
-    printf("Will this work?: %u\n",data[99].record[j]);
-    }
+   qsort(data, numRecs, 100, compare);
 
-  qsort(data, numRecs, 100, compare);
+   for(int j = 0; j < numRecs; j++){ 
+    
+     printf("Will this work?: %u\n",data[j].key);
+    
+     }
 
 
 
