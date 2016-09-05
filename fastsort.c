@@ -8,11 +8,21 @@
 #include "sort.h"
 
 int
+compare(const void* a, const void* b){
+
+  int one = (*(rec_t *)a).key;
+  int two = (*(rec_t *)b).key;
+  return (one-two);
+
+  }  
+
+
+int
 main(int argc, char *argv[])
 {
 
   char *inFile = "/no/such/file";
-  char *outFile = "no/such/file";  
+  char *outFile = "/no/such/file";  
 
   int c;
   opterr = 0;
@@ -34,7 +44,7 @@ main(int argc, char *argv[])
     exit(1);
 
   }
-  int total; // the total number of bytes in the record
+  int totalBytes; // the total number of bytes in the record
   rec_t r;
   while (1) {
     int rc;
@@ -45,20 +55,60 @@ main(int argc, char *argv[])
       perror("read");
       exit(1);
         }
-    total = total + sizeof(r);
+    totalBytes  = totalBytes + sizeof(r);
   }
-  
-  printf("Filesize: %d\n",total);
 
-  printf("If this works, it's the address: %d\n",&r); // WHAT YOU NEED TO DO: Figure out how 'r' variable works. I'm pretty sure that's where the records are being read into. From there
-                                                      // You need to be able to dynamically allocate space ( malloc? ) and get the records into there. Each record is 100 bytes. From there, gotta find a way
-                                                      // to check the first 4 bytes of each, which has the key. Sort by that. Try something like r[] next time you try this!!!!
-
+  (void) close(fd);  
+  int numRecs;             // The total number of records in the input file.
+  numRecs = totalBytes / 100;
 
  
+  printf("Filesize: %d, total records = %d\n",totalBytes,numRecs);
+
+  printf("If this works, it's the last key: %d\n",r.key); // WHAT YOU NEED TO DO: Figure out how 'r' variable works. I'm pretty sure that's where the records are being read into. From there
+                                                      // You need to be able to dynamically allocate space ( malloc? ) and get the records into there. Each record is 100 bytes. From there, gotta find a way
+                                                      // to check the first 4 bytes of each, which has the key. Sort by that. Try something like r[] next time you try this!!!!
+  rec_t *data;
+  data = (rec_t *)malloc(totalBytes);
+  
+  fd = open(inFile, O_RDONLY);
+  for(int i = 0; i<numRecs; i++){
+    int rc;
+    rc = read(fd, &r, sizeof(rec_t)); 
+    data[i] = r;
+    //printf("r is %d\n",r.key);
+
+    }  
+
+
+   qsort(data, numRecs, 100, compare);
+
+   for(int j = 0; j < numRecs; j++){ 
+    
+     printf("Will this work?: %u\n",data[j].key);
+    
+     }
+
+
+
+
+
+
   (void) close(fd);  
 
   return 0;
+
+//void
+//compare(const void* a, const void* b){
+//
+//  int one = ((rec_t *)a).key;
+//  int two = ((rec_t *)b).key;
+//  return (one-two);
+//
+//  }  
+
+
+
 }
 
 
