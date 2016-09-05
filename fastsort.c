@@ -7,8 +7,11 @@
 #include <string.h>
 #include "sort.h"
 
-int compare(const void* a, const void* b)
+#define RECORD_SIZE (100)   // Each rec_t is 100 bytes.
+
+int compare(const void* a, const void* b) 
 {
+    // compare function for qsort()
     int one = (*(rec_t *)a).key;
     int two = (*(rec_t *)b).key;
     return (one-two);
@@ -28,13 +31,13 @@ int main(int argc, char *argv[])
             inFile = strdup(optarg);
             break;
         case 'o':
-            outFile = argv[4];
+            outFile = strdup(optarg); 
             break;
+        default:
+            fprintf(stderr, "Usage: -i inputFile -o outputFile\n");
         }
     }
   
-   printf("The input file is %s and the output file is %s\n", inFile, outFile);
-
     int fd = open(inFile, O_RDONLY);
     if (fd < 0) {
         perror("open");
@@ -44,8 +47,9 @@ int main(int argc, char *argv[])
     int totalBytes; // the total number of bytes in the record
     rec_t r;
     while (1) {
+        // reads in all of the records
         int rc;
-        rc = read(fd, &r, sizeof(rec_t)); // &r gives the pointer to the record list, r.
+        rc = read(fd, &r, sizeof(rec_t)); 
         if (rc == 0)
              break;
         if (rc < 0) {
@@ -53,48 +57,55 @@ int main(int argc, char *argv[])
              exit(1);
         }
 
+        // gets the total bytes inputed, also used to find the number of records
         totalBytes  = totalBytes + sizeof(r);
 
     }
 
     (void) close(fd);  
    
-    int numRecs;             // The total number of records in the input file.
-    numRecs = totalBytes / 100;
+    int numRecs;
+    // the total number of records in the input file.
+    numRecs = totalBytes / RECORD_SIZE;
 
-    // printf("Filesize: %d, total records = %d\n",totalBytes,numRecs);
-    // printf("If this works, it's the last key: %d\n",r.key);
-
-
+    // 
     rec_t *data;
     data = (rec_t *)malloc(totalBytes);
-  
+    if(data == NULL) {
+        // if malloc fails:
+        perror("memory");
+        exit(1);
+    } 
+
+    // opening the file again. probably a better way to do this... couldn't figure out rewind()
     fd = open(inFile, O_RDONLY);
  
     for(int i = 0; i<numRecs; i++) {
+        // putting the values into the array
         int rc;
         rc = read(fd, &r, sizeof(rec_t)); 
         data[i] = r;
-        //printf("r is %d\n",r.key);
     }  
 
+    // thank you, standard libraries! sort in ascending order.
+    qsort(data, numRecs, RECORD_SIZE, compare);
 
-    qsort(data, numRecs, 100, compare);
+// Debugging print: prints each key, hopefully sorted.
+//    for(int j = 0; j < numRecs; j++) {
+//        printf("%d: Will this work?: %u\n",j,data[j].key);
+//    }
 
-    for(int j = 0; j < numRecs; j++) { 
-        printf("%d: Will this work?: %u\n",j,data[j].key);
-    }
-
+    // Prepping the output file to be written to.
     fd = open(outFile, O_WRONLY|O_CREAT|O_TRUNC, S_IRWXU);
-   
     if (fd < 0) {
          perror("open");
          exit(1);
     }
 
     for(int i = 0; i < numRecs; i++){
+        // write each record
         int rc;
-        rc = write(fd,&data[i], sizeof(rec_t));
+        rc = write(fd, &data[i], sizeof(rec_t));
         if (rc != sizeof(rec_t)) {
             perror("write");
             exit(1);
