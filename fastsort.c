@@ -72,7 +72,7 @@ main(int argc, char *argv[])
 
 
   for(int j = 0; j < NUMRECS; j++){ 
-    printf("Will this work?: %u\n",data[91].record[j]);
+    printf("Will this work?: %u\n",data[99].record[j]);
     }
 
   (void) close(fd);  
